@@ -66,6 +66,9 @@ const isCollision = (filedSize, position) => {
   return false;
 };
 
+const isEatingMyself = (fields, position) => {
+  return fields[position.y][position.x] === 'snake'
+}
 
 function App() {
 
@@ -95,6 +98,8 @@ function App() {
   }, [tick]);
 
   const onStart = () => setStatus(GameStatus.playing);
+
+  const onStop = () => setStatus(GameStatus.suspended);
 
   const onRestart = () => {
     timer = setInterval(() => {
@@ -135,7 +140,7 @@ function App() {
       x:x + delta.x,
       y:y + delta.y
     };
-    if(isCollision(fields.length, newPosition)){
+    if(isCollision(fields.length, newPosition) || isEatingMyself(fields, newPosition)){
       unsubscribe()
       return false;
     }
@@ -167,7 +172,7 @@ function App() {
         <Field fields={fields} />
       </main>
       <footer className="footer">
-        <Button status={status} onStart={onStart} onRestart={onRestart} />
+        <Button status={status} onStop={onStop} onStart={onStart} onRestart={onRestart} />
         <ManipulationPanel onChange={onChangeDirection} />
       </footer>
 
